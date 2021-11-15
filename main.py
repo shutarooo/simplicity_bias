@@ -11,7 +11,7 @@ print('Using {} device'.format(device))
 
 model = NeuralNetwork().to(device)
 
-dic = calc_freq(7, device, model, initializer.weight_init_unit_uniform)
+dic = calc_freq(6, device, model, initializer.weight_init_unit_uniform)
 #print(type(dic))
 dic = sorted(dic.items(), reverse=True, key=lambda x : x[1])
 save_dic(dic, 'unit_uniform')

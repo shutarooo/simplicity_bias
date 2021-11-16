@@ -48,7 +48,7 @@ def calc_freq(digit, device, model, initializer):
             function_freq[tuple(keys)] = 1
         
         if k % 10**(digit-1) == 0:
-            print('{}% finished.'.format(k))
+            print('{}% finished.'.format(k/10**(digit-1)*10))
     
     return function_freq
 

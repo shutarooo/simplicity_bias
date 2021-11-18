@@ -1,5 +1,4 @@
-
-from model import NeuralNetwork
+from model import NeuralNetwork, DeepNeuralNetwork
 import torch
 from torch import nn
 import math
@@ -12,6 +11,5 @@ print('Using {} device'.format(device))
 model = NeuralNetwork().to(device)
 
 dic = calc_freq(6, device, model, initializer.weight_init_unit_uniform)
-#print(type(dic))
 dic = sorted(dic.items(), reverse=True, key=lambda x : x[1])
 save_dic(dic, 'unit_uniform')

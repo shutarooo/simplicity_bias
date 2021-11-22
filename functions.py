@@ -27,19 +27,27 @@ def calc_freq(digit, device, model, initializer):
             out_seq.append(output.tolist())
         
         # 省メモリであるようにfunction_freqを定義して記録する
+        split_array = []
+        x = ''
+        for i, out in enumerate(out_seq):
+            x += str(int(out[0]))
+            if (i+1)%60==0:
+                split_array.append(x)
+                x = ''
+            elif i==127:
+                split_array.append(x)
+        
         keys = []
-        key = 0
-        cnt = 0
+        for s in split_array:
+            keys.append(int('0b'+s, 2))
 
-        for index, out in enumerate(out_seq):
-            #print(index)
-            key += out[0]*(2**(index - cnt*60))
-            if index != 0 and index%60 == 0:
-                #print('aaa')
-                keys.append(key)
-                key=0
-                cnt+=1
-        keys.append(key)
+        '''
+        print('out: {} {} {}'.format(split_array[0], split_array[1], split_array[2]))
+        print('key: {} {} {}'.format(keys[0], keys[1], keys[2]))
+        print('')
+        '''
+
+        
         
         #print(keys)
         if tuple(keys) in function_freq:
@@ -71,6 +79,6 @@ def get_params(model):
 
 # json形式で保存
 def save_dic(dic, path):
-    path_file = os.getcwd() + '/data/func_freq/' + path +'.json'
+    path_file = os.getcwd() + path +'.json'
     with open(path_file, 'w') as f:
         json.dump(dic , f)

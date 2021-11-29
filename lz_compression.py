@@ -24,8 +24,8 @@ def lz_compression(S):
         C = C+1
     return C
 
-def customized_lz(S, is_list='true'):
-    if is_list:
+def customized_lz(S, is_list_10='true'):
+    if is_list_10:
         S = list10_to_bin(S)
     if not ('0' in S) or not ('1' in S):
         return 7

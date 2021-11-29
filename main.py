@@ -28,6 +28,10 @@ digit = args.digit
 initializer = weight_init_unit_uniform if args.initializer == 'unit' else weight_init_wide_uniform if args.initializer == 'wide' else ''
 path = args.path
 
+<<<<<<< HEAD
 dic = calc_freq(digit, device, model, initializer)
+=======
+dic = calc_freq(6, device, model, initializer.weight_init_unit_uniform)
+>>>>>>> 5eca0853d5af97d5e57ad46b20f3854ea97c7362
 dic = sorted(dic.items(), reverse=True, key=lambda x : x[1])
 save_dic(dic, path)

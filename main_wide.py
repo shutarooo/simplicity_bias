@@ -1,4 +1,4 @@
-from model import NeuralNetwork
+from model import NeuralNetwork, DeepNeuralNetwork
 import torch
 from torch import nn
 import math

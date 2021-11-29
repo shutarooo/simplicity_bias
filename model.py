@@ -11,9 +11,9 @@ class NeuralNetwork(nn.Module):
         super(NeuralNetwork, self).__init__()
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(7, 10),
+            nn.Linear(7, 40),
             nn.ReLU(),
-            nn.Linear(10, 1),
+            nn.Linear(40, 1),
         )
 
     def forward(self, x):
@@ -21,16 +21,18 @@ class NeuralNetwork(nn.Module):
         #logits = torch.heaviside(self.linear_relu_stack(x), torch.tensor([0.0], device=device))
         return self.linear_relu_stack(x)
 
+
 class DeepNeuralNetwork(nn.Module):
     def __init__(self):
-        super(NeuralNetwork, self).__init__()
+        super(DeepNeuralNetwork, self).__init__()
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
             nn.Linear(7, 40),
             nn.ReLU(),
             nn.Linear(40, 40),
             nn.ReLU(),
-            nn.Linear(40, 1)
+            nn.Linear(40, 1), 
+            nn.Sigmoid()
         )
 
     def forward(self, x):

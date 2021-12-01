@@ -46,37 +46,41 @@ def test_loop(dataloader, model, loss_fn):
             
     test_loss /= size
     correct /= size
-    print(f"Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
+    #print(f"Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
     return correct
+
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+print('Using {} device'.format(device))
+
+model_dnn = model.DeepNeuralNetwork().to(device)
 
 train_size = 112
 val_size = 16
 test_size = 0
 
-dataset = CustomImageDataset()
+dataset = CustomImageDataset(device)
 
 train_dataset, val_dataset, test_dataset = torch.utils.data.random_split(dataset, [train_size, val_size, test_size])
 
 train_dataloader = DataLoader(train_dataset, batch_size = 8)
-val_dataloader = DataLoader(val_dataset, batch_size = 8)
+val_dataloader = DataLoader(val_dataset, batch_size = 1)
 test_dataloader = DataLoader(test_dataset, batch_size = 8)
 
-learning_rate = 1e-3
+learning_rate = 1e-2
 
-model_dnn = model.DeepNeuralNetwork()
+
 loss_fn = nn.BCELoss()
 optimizer = torch.optim.SGD(model_dnn.parameters(), lr=learning_rate)
 
 epochs = 0
 correct = 0
 while correct < 0.9:
-    print(f"Epoch {epochs+1}-------------------------------")
+    #print(f"Epoch {epochs+1}-------------------------------")
     train_loop(train_dataloader, model_dnn, loss_fn, optimizer)
-    correct = test_loop(val_dataloader, model_dnn, loss_fn)
+    correct = test_loop(test_dataloader, model_dnn, loss_fn)
     epochs += 1
-    if epochs == 10:
-        break
 print("Done!")
+print("epoch: {}".format(epochs))
 
 torch.save(model_dnn, 'model/dnn/model.pth')
 path_file = 'model/dnn/info.json'

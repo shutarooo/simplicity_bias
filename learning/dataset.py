@@ -25,7 +25,7 @@ class CustomImageDataset(Dataset):
         #self.labels = [str(random.randint(0, 1)) for i in range(2**7)]
 
         print(customized_lz(self.labels, False))
-        self.labels = torch.Tensor([int(i) for i in self.labels])
+        self.labels = torch.Tensor([int(i) for i in self.labels]).float()
         self.transform = transform
         self.target_transform = target_transform
 
@@ -41,5 +41,5 @@ class CustomImageDataset(Dataset):
             label = self.target_transform(label)
         #print(input)
         #sample = {"input": torch.Tensor(input), "label": label}
-        sample = [torch.Tensor(input), label]
+        sample = [torch.Tensor(input).float(), label]
         return sample

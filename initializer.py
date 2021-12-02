@@ -4,7 +4,11 @@ import math
 
 def weight_init_gauss(m):
     if type(m)==nn.Linear:
-        nn.init.normal_(m.weight, 0, 30)
+        nn.init.normal_(m.weight, 0, 1)
+
+def weight_normalize(m, norm, const):
+    if type(m)==nn.Linear:
+        m.weight = m.weight * (const/norm)
 
 def weight_init_uniform(m):
     if type(m)==nn.Linear:

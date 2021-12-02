@@ -34,19 +34,44 @@ def train_loop(dataloader, model, loss_fn, optimizer):
         '''
 
 
-def test_loop(dataloader, model, loss_fn):
+def test_loop(dataloader, model, loss_fn, is_print):
     size = len(dataloader.dataset)
     test_loss, correct = 0, 0
 
+    
     with torch.no_grad():
         for X, y in dataloader:
             pred = model(X)
+            #print(pred)
             test_loss += loss_fn(pred, y.unsqueeze(1)).item()
-            correct += (pred.argmax(1) == y).type(torch.float).sum().item()
+            '''
+            print(pred)
+            print(torch.round(pred))
+            print(y)
+            print((torch.round(pred) == y).type(torch.float).sum().item())
+            #print(f"{t.sum().item()}")
+            '''
+            '''
+            print(torch.round(pred))
+            print(y)
+            print((torch.round(pred) == y.unsqueeze(1)).type(torch.float).sum().item())
+            '''
+            correct += (torch.round(pred) == y.unsqueeze(1)).type(torch.float).sum().item()
+    
+
+
             
+    #print(f"correct num: {correct}")
+    #sys.exit()
     test_loss /= size
     correct /= size
+<<<<<<< HEAD
     #print(f"Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
+=======
+    if is_print:
+        print(f"Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
+    #sys.exit()
+>>>>>>> c6ca09e19dc522282240c92a6b83b1a9ba2bac56
     return correct
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -66,8 +91,13 @@ train_dataloader = DataLoader(train_dataset, batch_size = 8)
 val_dataloader = DataLoader(val_dataset, batch_size = 1)
 test_dataloader = DataLoader(test_dataset, batch_size = 8)
 
+<<<<<<< HEAD
 learning_rate = 1e-2
 
+=======
+
+learning_rate = 1e-3
+>>>>>>> c6ca09e19dc522282240c92a6b83b1a9ba2bac56
 
 loss_fn = nn.BCELoss()
 optimizer = torch.optim.SGD(model_dnn.parameters(), lr=learning_rate)
@@ -75,14 +105,28 @@ optimizer = torch.optim.SGD(model_dnn.parameters(), lr=learning_rate)
 epochs = 0
 correct = 0
 while correct < 0.9:
+<<<<<<< HEAD
     #print(f"Epoch {epochs+1}-------------------------------")
     train_loop(train_dataloader, model_dnn, loss_fn, optimizer)
     correct = test_loop(test_dataloader, model_dnn, loss_fn)
     epochs += 1
+=======
+
+    is_print = False
+    if epochs % 1000 == 0:
+        print(f"Epoch {epochs+1}--------------")
+        is_print = True
+    
+    train_loop(train_dataloader, model_dnn, loss_fn, optimizer)
+    correct = test_loop(val_dataloader, model_dnn, loss_fn, is_print)
+    epochs += 1
+    
+        
+>>>>>>> c6ca09e19dc522282240c92a6b83b1a9ba2bac56
 print("Done!")
 print("epoch: {}".format(epochs))
 
-torch.save(model_dnn, 'model/dnn/model.pth')
-path_file = 'model/dnn/info.json'
+torch.save(model_dnn, 'model/dnn/model_10.pth')
+path_file = 'model/dnn/info_10.json'
 with open(path_file, 'w') as f:
-    json.dump({'target_function': dataset.labels.tolist(), 'train_size': 112, 'val_size': 16, 'threshold': 0.9} , f)
+    json.dump({'target_function': dataset.labels.tolist(), 'epochs': epochs, 'train_size': 112, 'val_size': 16, 'threshold': 0.9} , f)

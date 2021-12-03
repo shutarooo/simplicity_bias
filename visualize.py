@@ -1,7 +1,7 @@
 import json
 import matplotlib.pyplot as plt
 
-with open('data/func_freq/wide_uniform.json') as f:
+with open('data/freq_test/normalized_no_bias.json') as f:
     unit_data = json.load(f)  # ファイルオブジェクトfinをデコードする
 
 '''
@@ -27,11 +27,11 @@ ax1.set_xscale('log')
 plt.xlabel('rank')
 plt.ylabel('prob')
 
-plt.title('NN_wide')
+plt.title('no bias')
 
 #ax2.plot(x_wide, wide)
 #ax2 = plt.gca()
 #ax2.set_yscale('log')
 
-plt.savefig('images/NN_wide.pdf')
+#plt.savefig('images/normalized/norm_9.pdf')
 plt.show()

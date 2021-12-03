@@ -31,7 +31,7 @@ class DeepNeuralNetwork(nn.Module):
             nn.ReLU(),
             nn.Linear(40, 40),
             nn.ReLU(),
-            nn.Linear(40, 1), 
+            nn.Linear(40, 1, bias=False), 
             nn.Sigmoid()
         )
 

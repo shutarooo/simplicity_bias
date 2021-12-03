@@ -5,6 +5,7 @@ import itertools
 import json
 import os
 import sys
+import matplotlib.pyplot as plt
 
 from initializer import weight_init_gauss, weight_normalize
 
@@ -31,8 +32,9 @@ def calc_norm(model):
     return norm
 
 def norm_initialize(model):
-    model.apply(weight_init_gauss)
+    
     norm = calc_norm(model)
+    #print(norm)
     #print(norm)
     #print(model.linear_relu_stack[0].bias)
 
@@ -40,6 +42,8 @@ def norm_initialize(model):
     for i in range(len(model.linear_relu_stack)):
         if isinstance(model.linear_relu_stack[i], nn.Linear):
             model.linear_relu_stack[i].weight = nn.Parameter(model.linear_relu_stack[i].weight * (13.0/norm))
+            if i==4:
+                break
             model.linear_relu_stack[i].bias = nn.Parameter(model.linear_relu_stack[i].bias * (13.0/norm))
 
     '''
@@ -87,6 +91,17 @@ def calc_freq(digit, device, model, initializer='norm'):
     for k in range(10**digit):
         # ランダムな重みでNNを初期化
         if initializer == 'norm':
+            model.apply(weight_init_gauss)
+            norm_initialize(model)
+            #print(model.linear_relu_stack[4].bias)
+            #print(torch.mean(torch.abs(model.linear_relu_stack[4].weight)))
+        
+        elif initializer == 'self':
+            nn.init.normal_(model.linear_relu_stack[0].weight, 0, 1)
+            nn.init.normal_(model.linear_relu_stack[0].bias, 0, 1)
+            nn.init.normal_(model.linear_relu_stack[2].weight, 0, 1)
+            nn.init.normal_(model.linear_relu_stack[2].bias, 0, 1)
+            nn.init.normal_(model.linear_relu_stack[4].weight, 0, 1)
             norm_initialize(model)
         
         else:
@@ -95,8 +110,10 @@ def calc_freq(digit, device, model, initializer='norm'):
         # 全ての入力に対して出力を計算し、NNが表現している関数をout_seqで取得する
         out_seq = []
         for input in tensor_input:
-            output = torch.heaviside(model(input), torch.tensor([0.0], device=device))
+            output = torch.heaviside(model(input)-0.5, torch.tensor([0.0], device=device))
             out_seq.append(output.tolist())
+
+            sys.exit()
         
         # 省メモリであるようにfunction_freqを定義して記録する
         split_array = []
@@ -129,6 +146,7 @@ def calc_freq(digit, device, model, initializer='norm'):
         
         if k % 10**(digit-1) == 0:
             print('{}% finished.'.format(k/10**(digit-1)*10))
+        
     
     return function_freq
 
@@ -154,3 +172,38 @@ def save_dic(dic, path):
     path_file = os.getcwd() + path +'.json'
     with open(path_file, 'w') as f:
         json.dump(dic , f)
+
+bias = 0
+def print_ouput(module, input, output):
+    '''
+    plt.hist(input.detach().numpy())
+    plt.title('input')
+    plt.show()
+    '''
+
+    global bias 
+    bias = module.bias.detach().numpy()
+    '''
+    plt.hist(module.bias.detach().numpy())
+    plt.title('bias')
+    plt.show()
+    #plt.savefig('./images/no_bias/output.pdf')
+    '''
+
+def print_input(module, input, output):
+    #print(input)
+    '''
+    plt.hist(input[0].detach().numpy())
+    plt.title('input')
+    plt.show()
+    '''
+
+    print('input: {}'.format(input[0].item() - bias))
+
+    print('bias: {}'.format(bias))
+
+    '''
+    plt.hist(input[0].detach().numpy() - bias)
+    plt.title('input')
+    plt.show()
+    '''

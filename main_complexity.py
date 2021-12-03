@@ -1,8 +1,8 @@
 import json
 import matplotlib.pyplot as plt
-from lz_complexity import lz_compression
+from lz_compression import lz_compression
 
-with open('data/func_freq/NN/unit_uniform.json') as f:
+with open('data/freq_test/normalized_no_bias.json') as f:
     unit_data = json.load(f)  # ファイルオブジェクトfinをデコードする
 
 x_out = []

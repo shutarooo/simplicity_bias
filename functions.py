@@ -41,10 +41,10 @@ def norm_initialize(model):
     #print(model)
     for i in range(len(model.linear_relu_stack)):
         if isinstance(model.linear_relu_stack[i], nn.Linear):
-            model.linear_relu_stack[i].weight = nn.Parameter(model.linear_relu_stack[i].weight * (13.0/norm))
+            model.linear_relu_stack[i].weight = nn.Parameter(model.linear_relu_stack[i].weight * (13.5/norm))
             if i==4:
                 break
-            model.linear_relu_stack[i].bias = nn.Parameter(model.linear_relu_stack[i].bias * (13.0/norm))
+            model.linear_relu_stack[i].bias = nn.Parameter(model.linear_relu_stack[i].bias * (13.5/norm))
 
     '''
     for param_tensor in model.state_dict():
@@ -112,8 +112,6 @@ def calc_freq(digit, device, model, initializer='norm'):
         for input in tensor_input:
             output = torch.heaviside(model(input)-0.5, torch.tensor([0.0], device=device))
             out_seq.append(output.tolist())
-
-            sys.exit()
         
         # 省メモリであるようにfunction_freqを定義して記録する
         split_array = []

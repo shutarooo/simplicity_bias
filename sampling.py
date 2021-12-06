@@ -11,10 +11,10 @@ print('Using {} device'.format(device))
 model = DeepNeuralNetwork().to(device)
 print(model.linear_relu_stack)
 #sys.exit()
-model.linear_relu_stack[4].register_forward_hook(print_ouput)
-model.linear_relu_stack[5].register_forward_hook(print_input)
+#model.linear_relu_stack[4].register_forward_hook(print_ouput)
+#model.linear_relu_stack[5].register_forward_hook(print_input)
 
-dic = calc_freq(0, device, model, initializer='self')
+dic = calc_freq(0, device, model, initializer=weight_init_unit_uniform)
 
 dic = sorted(dic.items(), reverse=True, key=lambda x : x[1])
 save_dic(dic, '/data/freq_test/normalized_no_bias')

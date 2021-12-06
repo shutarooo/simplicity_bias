@@ -110,7 +110,7 @@ while correct < 0.9:
 print("Done!")
 print("epoch: {}".format(epochs))
 
-torch.save(model_dnn, 'model3/dnn/model_5.pth')
-path_file = 'model3/dnn/info_5.json'
+torch.save(model_dnn, 'model3/dnn/model_10.pth')
+path_file = 'model3/dnn/info_10.json'
 with open(path_file, 'w') as f:
     json.dump({'target_function': dataset.labels.tolist(), 'epochs': epochs, 'train_size': 112, 'val_size': 16, 'threshold': 0.9} , f)

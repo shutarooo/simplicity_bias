@@ -15,6 +15,14 @@ def calc_norm(model):
     #norm_log = 0
     param_layer = 0
 
+    for tens in model.linear_relu_stack:
+        if isinstance(tens, torch.nn.Linear):
+            print(tens)
+            x = torch.norm(tens.weight, p='fro')
+            #print(x)
+            norm += x.detach().numpy()
+            #norm_log += torch.log(x).detach().numpy()
+    '''
     for param_tensor in model.state_dict():
         cnt += 1
 
@@ -29,6 +37,7 @@ def calc_norm(model):
             x = torch.cat((param_layer, model.state_dict()[param_tensor].unsqueeze(1)), 1)
          
             norm += torch.norm(x, p='fro')
+    '''
     return norm
 
 def norm_initialize(model):
@@ -106,6 +115,7 @@ def calc_freq(digit, device, model, initializer='norm'):
         
         else:
             model.apply(initializer)
+            print('norm: {}'.format(calc_norm(model)))
 
         # 全ての入力に対して出力を計算し、NNが表現している関数をout_seqで取得する
         out_seq = []

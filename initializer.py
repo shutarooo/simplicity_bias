@@ -29,7 +29,3 @@ def weight_init_wide_uniform(m):
             if torch.norm(m.weight, p='fro') > 1:
                 break
 
-def weight_init_unit_uniform(m):
-    if type(m)==nn.Linear:
-        nn.init.uniform_(m.weight, -1, 1)
-        nn.init.uniform_(m.bias, -1, 1)

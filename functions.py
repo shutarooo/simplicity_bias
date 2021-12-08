@@ -17,7 +17,7 @@ def calc_norm(model):
 
     for tens in model.linear_relu_stack:
         if isinstance(tens, torch.nn.Linear):
-            print(tens)
+            #print(tens)
             x = torch.norm(tens.weight, p='fro')
             #print(x)
             norm += x.detach().numpy()
@@ -50,10 +50,10 @@ def norm_initialize(model):
     #print(model)
     for i in range(len(model.linear_relu_stack)):
         if isinstance(model.linear_relu_stack[i], nn.Linear):
-            model.linear_relu_stack[i].weight = nn.Parameter(model.linear_relu_stack[i].weight * (13.0/norm))
+            model.linear_relu_stack[i].weight = nn.Parameter(model.linear_relu_stack[i].weight * (13.5/norm))
             if i==4:
                 break
-            model.linear_relu_stack[i].bias = nn.Parameter(model.linear_relu_stack[i].bias * (13.0/norm))
+            model.linear_relu_stack[i].bias = nn.Parameter(model.linear_relu_stack[i].bias * (13.5/norm))
 
     '''
     for param_tensor in model.state_dict():
@@ -91,7 +91,7 @@ def norm_initialize(model):
 def calc_freq(digit, device, model, initializer='norm'):
     function_freq = {}
     binary_input = []
-    for e in itertools.product([0, 1], repeat=7):
+    for e in itertools.product([0, 1], repeat=10):
         binary_input.append(e)
     tensor_input = torch.tensor(binary_input, device=device)
     tensor_input = tensor_input.float()
@@ -115,25 +115,24 @@ def calc_freq(digit, device, model, initializer='norm'):
         
         else:
             model.apply(initializer)
-            print('norm: {}'.format(calc_norm(model)))
+            #print('norm: {}'.format(calc_norm(model)))
 
         # 全ての入力に対して出力を計算し、NNが表現している関数をout_seqで取得する
         out_seq = []
         for input in tensor_input:
             output = torch.heaviside(model(input)-0.5, torch.tensor([0.0], device=device))
             out_seq.append(output.tolist())
-
-            sys.exit()
         
         # 省メモリであるようにfunction_freqを定義して記録する
         split_array = []
         x = ''
+        last_index = len(out_seq) - 1
         for i, out in enumerate(out_seq):
             x += str(int(out[0]))
             if (i+1)%60==0:
                 split_array.append(x)
                 x = ''
-            elif i==127:
+            elif i==last_index:
                 split_array.append(x)
         
         keys = []

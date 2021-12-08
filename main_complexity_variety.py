@@ -2,7 +2,7 @@ import json
 import matplotlib.pyplot as plt
 from lz_compression import lz_compression
 
-with open('data/func_freq/DNN/unit_uniform.json') as f:
+with open('data/func_freq_norm/raw/norm_135.json') as f:
     unit_data = json.load(f)  # ファイルオブジェクトfinをデコードする
 
 complexity_list = []
@@ -30,10 +30,10 @@ for i, data in enumerate(unit_data):
         #x_unit[i] = 7*(lz_compression(list(data)) + lz_compression(list(data)[::-1]))/2
         comp_freq_list.append([y, data[1]])
     if cnt % 10**5 ==0:
-        print(f'{cnt}0.0%, finished.')
+        print(f'{cnt/10**4}%, finished.')
     cnt += 1
 
-path_file = './data/func_freq/DNN/uni_uniform_complexity.json'
+path_file = './data/func_freq_norm/comp_freq/norm_135.json'
 with open(path_file, 'w') as f:
         json.dump(comp_freq_list , f)
 

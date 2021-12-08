@@ -2,13 +2,20 @@ from torch import nn
 import torch
 import math
 
+def init_10_input(m):
+    if type(m)==nn.Linear:
+        nn.init.normal_(m.weight, 0, 0.1)
+        if m.bias is not None:
+            print('none')
+            nn.init.normal_(m.bias, 0, 0.1)
+        
+
 def weight_init_gauss(m):
     if type(m)==nn.Linear:
         nn.init.normal_(m.weight, 0, 1)
-        if m.weight is None:
-            print('none')
-            return
-        nn.init.normal_(m.bias, 0, 1)
+        if m.bias is not None:
+            #print('none')
+            nn.init.normal_(m.bias, 0, 1)
 
 def weight_normalize(m, norm, const):
     if type(m)==nn.Linear:

@@ -14,13 +14,18 @@ class CustomImageDataset(Dataset):
     def __init__(self, device, transform=None, target_transform=None):
         self.inputs = []
         self.device = device
-        for e in itertools.product([0, 1], repeat=7):
+        for e in itertools.product([0, 1], repeat=10):
             self.inputs.append(e)
 
             #print(type(e[0]))
             #break
-        self.labels = list('0'*21 + '1'*13 + '0'*18 + '1'*24 + '0'*39 + '1'*13)
-        #self.labels = list('0'*13 + '1'*3 + '0'*36 + '1'*41 + '0'*8 + '1'*2 + '0'*25)
+        self.labels = list('0'*20 + '1'*10 + '0'*60 + '1'*40 + '0'*10 + '1'*5 + '0'*20 + '1'*10\
+                            + '0'*60 + '1'*30 + '0'*10 + '1'*10 + '0'*30 + '1'*20 + '0'*80 + '1'*50\
+                            + '0'*30 + '1'*30 + '0'*60 + '1'*70 + '0'*10 + '1'*20 + '0'*80 + '1'*20\
+                            + '0'*120 + '1'*30 + '0'*20 + '1'*45 + '0'*24)
+        print(len(self.labels))
+        #self.labels = list('0'*210 + '1'*130 + '0'*60 + '1'*74 + '0'*160 + '1'*220 + '0'*80 + '1'*90)  1024桁
+        #self.labels = list('0'*13 + '1'*3 + '0'*36 + '1'*41 + '0'*8 + '1'*2 + '0'*25)  126桁
         #self.labels = [str(random.randint(0, 1)) for i in range(2**7)]
 
         print(customized_lz(self.labels, False))

@@ -39,3 +39,21 @@ class DeepNeuralNetwork(nn.Module):
         #x = self.flatten(x)
         #logits = torch.heaviside(self.linear_relu_stack(x), torch.tensor([0.0], device=device))
         return self.linear_relu_stack(x)
+
+class DeepNeuralNetwork_2(nn.Module):
+    def __init__(self):
+        super(DeepNeuralNetwork_2, self).__init__()
+        self.flatten = nn.Flatten()
+        self.linear_relu_stack = nn.Sequential(
+            nn.Linear(10, 40),
+            nn.ReLU(),
+            nn.Linear(40, 40),
+            nn.ReLU(),
+            nn.Linear(40, 1, bias=False), 
+            nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        #x = self.flatten(x)
+        #logits = torch.heaviside(self.linear_relu_stack(x), torch.tensor([0.0], device=device))
+        return self.linear_relu_stack(x)

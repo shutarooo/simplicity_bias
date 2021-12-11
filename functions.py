@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 
 from initializer import weight_init_gauss, weight_normalize
 
+
 def calc_norm(model):
     cnt = 0
     norm = 0
@@ -17,10 +18,10 @@ def calc_norm(model):
 
     for tens in model.linear_relu_stack:
         if isinstance(tens, torch.nn.Linear):
-            #print(tens)
+            # print(tens)
             x = torch.norm(tens.weight, p='fro')
-            #print(x)
-            norm += x.detach().numpy()
+            # print(x)
+            norm += x.cpu().detach().numpy()
             #norm_log += torch.log(x).detach().numpy()
     '''
     for param_tensor in model.state_dict():
@@ -40,20 +41,23 @@ def calc_norm(model):
     '''
     return norm
 
-def norm_initialize(model):
-    
-    norm = calc_norm(model)
-    #print(norm)
-    #print(norm)
-    #print(model.linear_relu_stack[0].bias)
 
-    #print(model)
+def norm_initialize(model):
+
+    norm = calc_norm(model)
+    # print(norm)
+    # print(norm)
+    # print(model.linear_relu_stack[0].bias)
+
+    # print(model)
     for i in range(len(model.linear_relu_stack)):
         if isinstance(model.linear_relu_stack[i], nn.Linear):
-            model.linear_relu_stack[i].weight = nn.Parameter(model.linear_relu_stack[i].weight * (13.5/norm))
-            if i==4:
+            model.linear_relu_stack[i].weight = nn.Parameter(
+                model.linear_relu_stack[i].weight * (13.5/norm))
+            if i == 4:
                 break
-            model.linear_relu_stack[i].bias = nn.Parameter(model.linear_relu_stack[i].bias * (13.5/norm))
+            model.linear_relu_stack[i].bias = nn.Parameter(
+                model.linear_relu_stack[i].bias * (13.5/norm))
 
     '''
     for param_tensor in model.state_dict():
@@ -82,9 +86,8 @@ def norm_initialize(model):
     #return norm
     '''
 
-
-    #print(calc_norm(model))
-    #print()
+    # print(calc_norm(model))
+    # print()
 
 
 # サンプルサイズの桁数を受け取って関数が現れた頻度を辞書型で返す
@@ -102,9 +105,9 @@ def calc_freq(digit, device, model, initializer='norm'):
         if initializer == 'norm':
             model.apply(weight_init_gauss)
             norm_initialize(model)
-            #print(model.linear_relu_stack[4].bias)
-            #print(torch.mean(torch.abs(model.linear_relu_stack[4].weight)))
-        
+            # print(model.linear_relu_stack[4].bias)
+            # print(torch.mean(torch.abs(model.linear_relu_stack[4].weight)))
+
         elif initializer == 'self':
             nn.init.normal_(model.linear_relu_stack[0].weight, 0, 1)
             nn.init.normal_(model.linear_relu_stack[0].bias, 0, 1)
@@ -112,7 +115,7 @@ def calc_freq(digit, device, model, initializer='norm'):
             nn.init.normal_(model.linear_relu_stack[2].bias, 0, 1)
             nn.init.normal_(model.linear_relu_stack[4].weight, 0, 1)
             norm_initialize(model)
-        
+
         else:
             model.apply(initializer)
             #print('norm: {}'.format(calc_norm(model)))
@@ -120,21 +123,22 @@ def calc_freq(digit, device, model, initializer='norm'):
         # 全ての入力に対して出力を計算し、NNが表現している関数をout_seqで取得する
         out_seq = []
         for input in tensor_input:
-            output = torch.heaviside(model(input)-0.5, torch.tensor([0.0], device=device))
+            output = torch.heaviside(
+                model(input)-0.5, torch.tensor([0.0], device=device))
             out_seq.append(output.tolist())
-        
+
         # 省メモリであるようにfunction_freqを定義して記録する
         split_array = []
         x = ''
         last_index = len(out_seq) - 1
         for i, out in enumerate(out_seq):
             x += str(int(out[0]))
-            if (i+1)%60==0:
+            if (i+1) % 60 == 0:
                 split_array.append(x)
                 x = ''
-            elif i==last_index:
+            elif i == last_index:
                 split_array.append(x)
-        
+
         keys = []
         for s in split_array:
             keys.append(int('0b'+s, 2))
@@ -145,44 +149,48 @@ def calc_freq(digit, device, model, initializer='norm'):
         print('')
         '''
 
-        
-        
-        #print(keys)
+        # print(keys)
         if tuple(keys) in function_freq:
             function_freq[tuple(keys)] += 1
         else:
             function_freq[tuple(keys)] = 1
-        
+
         if k % 10**(digit-1) == 0:
             print('{}% finished.'.format(k/10**(digit-1)*10))
-        
-    
+
     return function_freq
 
 # parameterの分布を可視化するためにparametersをlistにして返す
+
+
 def get_params(model):
     params = []
     for param in model.parameters():
-        dim=param.dim()
+        dim = param.dim()
         param_list = torch.Tensor.tolist(param)
-        
+
         for row in param_list:
-            if dim==2:
+            if dim == 2:
                 for p in row:
                     params.append(p)
-            if dim==1:
+            if dim == 1:
                 params.append(row)
 
     print(len(params))
     return params
 
 # json形式で保存
+
+
 def save_dic(dic, path):
-    path_file = os.getcwd() + path +'.json'
+    path_file = os.getcwd() + path + '.json'
     with open(path_file, 'w') as f:
-        json.dump(dic , f)
+        json.dump(dic, f)
+
 
 bias = 0
+
+
 def print_ouput(module, input, output):
     '''
     plt.hist(input.detach().numpy())
@@ -190,7 +198,7 @@ def print_ouput(module, input, output):
     plt.show()
     '''
 
-    global bias 
+    global bias
     bias = module.bias.detach().numpy()
     '''
     plt.hist(module.bias.detach().numpy())
@@ -199,8 +207,9 @@ def print_ouput(module, input, output):
     #plt.savefig('./images/no_bias/output.pdf')
     '''
 
+
 def print_input(module, input, output):
-    #print(input)
+    # print(input)
     '''
     plt.hist(input[0].detach().numpy())
     plt.title('input')
